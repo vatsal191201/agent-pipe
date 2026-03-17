@@ -33,6 +33,42 @@ program
     await runPipelineCommand(name);
   });
 
+const configCmd = program
+  .command("config")
+  .description("Manage configuration");
+
+configCmd
+  .command("set <key> <value>")
+  .description("Set a config value (dot-notation supported)")
+  .action(async (key: string, value: string) => {
+    const { configSetCommand } = await import("./commands/config-cmd.js");
+    configSetCommand(key, value);
+  });
+
+configCmd
+  .command("get <key>")
+  .description("Get a config value")
+  .action(async (key: string) => {
+    const { configGetCommand } = await import("./commands/config-cmd.js");
+    configGetCommand(key);
+  });
+
+configCmd
+  .command("list")
+  .description("List all config values (API keys masked)")
+  .action(async () => {
+    const { configListCommand } = await import("./commands/config-cmd.js");
+    configListCommand();
+  });
+
+program
+  .command("info <step>")
+  .description("Show detailed information about a step")
+  .action(async (stepName: string) => {
+    const { infoCommand } = await import("./commands/info.js");
+    infoCommand(stepName);
+  });
+
 program
   .argument("[step]", "Step to execute")
   .option("-c, --config <pairs...>", "Config overrides (key=value)")
