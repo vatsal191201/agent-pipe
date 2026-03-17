@@ -94,6 +94,10 @@ pipe info <step>    # Show step details and config options
 | `pipe compare <models...>` | Compare models side-by-side |
 | `pipe cost` | Analyze pipeline cost from metadata |
 | `pipe config set/get/list` | Manage configuration |
+| `pipe init <name>` | Scaffold a new custom step |
+| `pipe install <source>` | Install step from path or git URL |
+| `pipe publish [dir]` | Show sharing instructions |
+| `pipe uninstall <name>` | Remove an installed step |
 | `pipe save <name> <def>` | Save a pipeline |
 | `pipe run <name>` | Run a saved pipeline |
 
@@ -154,6 +158,32 @@ Pipeline Cost Summary
 ────────────────────────────────────────────────────────────
   Total: 70→75 tokens  800ms  $0.000484
 ```
+
+## Custom Steps
+
+Create, install, and share your own steps:
+
+```bash
+# Scaffold a new step
+pipe init code-review
+
+# Edit code-review/index.js with your logic, then install locally
+pipe install ./code-review
+
+# Now use it
+git diff | pipe code-review
+
+# Share it via git
+cd code-review && git init && gh repo create pipe-step-code-review --public --source .
+
+# Others install from your repo
+pipe install https://github.com/yourname/pipe-step-code-review.git
+
+# Uninstall
+pipe uninstall code-review
+```
+
+Steps are plain JavaScript files with one export: an async generator that reads input, yields output, and returns metadata. See `pipe init` for a working template.
 
 ## Use Cases
 
@@ -248,8 +278,7 @@ Steps are async generators: `yield` text chunks (→ stdout), `return` metadata 
 
 ## Roadmap
 
-- **v0.2** (current) -- 10 steps, universal routing, model comparison, cost tracking
-- **v0.3** -- Step registry: `pipe install @community/code-review`, `pipe publish`
+- **v0.3** (current) -- Custom steps: `pipe init`, `pipe install`, `pipe publish`
 - **v0.4** -- Squeeze: 10x cheaper API calls via text-to-image compression
 - **v0.5** -- TinyForge: 26-byte model adapters shareable as URLs
 - **v0.6** -- Arena: competitive pipeline scoring and leaderboards
@@ -259,7 +288,7 @@ Steps are async generators: `yield` text chunks (→ stdout), `return` metadata 
 ```bash
 npm install          # Install dependencies
 npm run build        # Build with tsup
-npm test             # Run 78 tests (vitest)
+npm test             # Run 110 tests (vitest)
 npm run lint         # Type check (tsc --noEmit)
 ```
 
