@@ -2,6 +2,7 @@ import { streamText } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createOpenAI } from "@ai-sdk/openai";
 import type { StepDefinition, StepContext } from "./types.js";
+import { getApiKey } from "../runtime/config.js";
 
 export const translateStep: StepDefinition = {
   name: "translate",
@@ -19,8 +20,8 @@ export const translateStep: StepDefinition = {
 
     let model: any;
     let modelId: string;
-    const anthropicKey = ctx.globalConfig.api_keys.anthropic;
-    const openaiKey = ctx.globalConfig.api_keys.openai;
+    const anthropicKey = getApiKey("anthropic", ctx.globalConfig);
+    const openaiKey = getApiKey("openai", ctx.globalConfig);
 
     if (anthropicKey) {
       const anthropic = createAnthropic({ apiKey: anthropicKey });

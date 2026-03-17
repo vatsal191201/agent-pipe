@@ -110,6 +110,12 @@ describe("translate step", () => {
   });
 
   it("throws error when no API key is available", async () => {
+    // Temporarily clear env vars so getApiKey finds nothing
+    const savedAnthropic = process.env.ANTHROPIC_API_KEY;
+    const savedOpenai = process.env.OPENAI_API_KEY;
+    delete process.env.ANTHROPIC_API_KEY;
+    delete process.env.OPENAI_API_KEY;
+
     const ctx: StepContext = {
       input: "Hello",
       config: { lang: "es" },
@@ -122,5 +128,9 @@ describe("translate step", () => {
 
     const gen = translateStep.run(ctx);
     await expect(gen.next()).rejects.toThrow("No API key found");
+
+    // Restore env vars
+    if (savedAnthropic) process.env.ANTHROPIC_API_KEY = savedAnthropic;
+    if (savedOpenai) process.env.OPENAI_API_KEY = savedOpenai;
   });
 });
