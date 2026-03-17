@@ -99,6 +99,30 @@ program
   });
 
 program
+  .command("install <source>")
+  .description("Install a step from a local path or git URL")
+  .action(async (source: string) => {
+    const { installCommand } = await import("./commands/install.js");
+    installCommand(source);
+  });
+
+program
+  .command("publish [dir]")
+  .description("Publish a step (shows sharing instructions)")
+  .action(async (dir?: string) => {
+    const { publishCommand } = await import("./commands/publish.js");
+    publishCommand(dir);
+  });
+
+program
+  .command("uninstall <name>")
+  .description("Uninstall a custom step")
+  .action(async (name: string) => {
+    const { uninstallCommand } = await import("./commands/uninstall.js");
+    uninstallCommand(name);
+  });
+
+program
   .argument("[step]", "Step to execute")
   .option("-c, --config <pairs...>", "Config overrides (key=value)")
   .action(async (step: string | undefined, options: { config?: string[] }) => {
