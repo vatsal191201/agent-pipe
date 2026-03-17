@@ -1,6 +1,10 @@
 import { Command } from "commander";
 import { VERSION } from "./version.js";
 import { runStep } from "./commands/run-step.js";
+import { loadLocalSteps } from "./steps/loader.js";
+
+// Load user-defined steps from ~/.pipe/steps/ before parsing commands
+await loadLocalSteps();
 
 const program = new Command();
 
@@ -15,6 +19,14 @@ program
   .action(async () => {
     const { listCommand } = await import("./commands/list.js");
     listCommand();
+  });
+
+program
+  .command("init <name>")
+  .description("Scaffold a new custom step")
+  .action(async (name: string) => {
+    const { initCommand } = await import("./commands/init.js");
+    initCommand(name);
   });
 
 program
