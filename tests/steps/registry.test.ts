@@ -13,7 +13,8 @@ describe("step registry", () => {
     expect(steps).toContain("translate");
     expect(steps).toContain("extract");
     expect(steps).toContain("filter");
-    expect(steps.length).toBeGreaterThanOrEqual(9);
+    expect(steps).toContain("llm");
+    expect(steps.length).toBeGreaterThanOrEqual(10);
   });
 
   it("returns a step by name", () => {

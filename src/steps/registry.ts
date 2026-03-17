@@ -27,6 +27,7 @@ import { geminiStep } from "./gemini.js";
 import { translateStep } from "./translate.js";
 import { extractStep } from "./extract.js";
 import { filterStep } from "./filter.js";
+import { llmStep } from "./llm.js";
 
 registerStep(claudeStep);
 registerStep(openaiStep);
@@ -37,3 +38,4 @@ registerStep(geminiStep);
 registerStep(translateStep);
 registerStep(extractStep);
 registerStep(filterStep);
+registerStep(llmStep);
