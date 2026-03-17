@@ -28,6 +28,7 @@ import { translateStep } from "./translate.js";
 import { extractStep } from "./extract.js";
 import { filterStep } from "./filter.js";
 import { llmStep } from "./llm.js";
+import { squeezeStep } from "./squeeze.js";
 
 registerStep(claudeStep);
 registerStep(openaiStep);
@@ -39,3 +40,4 @@ registerStep(translateStep);
 registerStep(extractStep);
 registerStep(filterStep);
 registerStep(llmStep);
+registerStep(squeezeStep);

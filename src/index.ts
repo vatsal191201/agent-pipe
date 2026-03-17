@@ -122,6 +122,49 @@ program
     uninstallCommand(name);
   });
 
+const arenaCmd = program
+  .command("arena")
+  .description("Competitive pipeline challenges");
+
+arenaCmd
+  .command("create <name>")
+  .requiredOption("-d, --description <desc>", "Challenge description")
+  .action(async (name: string, opts: { description: string }) => {
+    const { arenaCreate } = await import("./commands/arena.js");
+    arenaCreate(name, opts.description);
+  });
+
+arenaCmd
+  .command("add-case <challenge>")
+  .requiredOption("-i, --input <text>", "Test input")
+  .requiredOption("-e, --expected <text>", "Expected output")
+  .action(async (challenge: string, opts: { input: string; expected: string }) => {
+    const { arenaAddCase } = await import("./commands/arena.js");
+    arenaAddCase(challenge, opts.input, opts.expected);
+  });
+
+arenaCmd
+  .command("run <challenge>")
+  .argument("<pipeline...>", "Pipeline command to run")
+  .action(async (challenge: string, pipeline: string[]) => {
+    const { arenaRun } = await import("./commands/arena.js");
+    await arenaRun(challenge, pipeline);
+  });
+
+arenaCmd
+  .command("leaderboard <challenge>")
+  .action(async (challenge: string) => {
+    const { arenaLeaderboard } = await import("./commands/arena.js");
+    arenaLeaderboard(challenge);
+  });
+
+arenaCmd
+  .command("list")
+  .action(async () => {
+    const { arenaList } = await import("./commands/arena.js");
+    arenaList();
+  });
+
 program
   .argument("[step]", "Step to execute")
   .option("-c, --config <pairs...>", "Config overrides (key=value)")
