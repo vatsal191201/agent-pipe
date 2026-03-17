@@ -70,6 +70,23 @@ program
   });
 
 program
+  .command("compare <models...>")
+  .description("Compare multiple models on the same input")
+  .option("-c, --config <pairs...>", "Config overrides (key=value)")
+  .action(async (models: string[], options: { config?: string[] }) => {
+    const { compareCommand } = await import("./commands/compare.js");
+    await compareCommand(models, options);
+  });
+
+program
+  .command("cost")
+  .description("Analyze pipeline cost from [pipe:meta] data")
+  .action(async () => {
+    const { costCommand } = await import("./commands/cost.js");
+    await costCommand();
+  });
+
+program
   .argument("[step]", "Step to execute")
   .option("-c, --config <pairs...>", "Config overrides (key=value)")
   .action(async (step: string | undefined, options: { config?: string[] }) => {

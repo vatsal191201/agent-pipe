@@ -6,7 +6,7 @@ import type { StepDefinition, StepContext } from "./types.js";
 import { getApiKey } from "../runtime/config.js";
 import { parseMaxTokens } from "./cheapest-model.js";
 
-function resolveModel(modelString: string, globalConfig: any) {
+export function resolveModel(modelString: string, globalConfig: any) {
   // Parse "provider/model" format
   const slashIndex = modelString.indexOf("/");
   if (slashIndex === -1) {
