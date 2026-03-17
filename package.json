@@ -1,0 +1,36 @@
+{
+  "name": "agent-pipe",
+  "version": "0.1.0",
+  "description": "The Unix philosophy for AI agents",
+  "type": "module",
+  "bin": {
+    "pipe": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "ai",
+    "agent",
+    "pipe",
+    "cli",
+    "llm"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.58",
+    "@ai-sdk/openai": "^3.0.41",
+    "ai": "^6.0.116",
+    "commander": "^14.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  }
+}
