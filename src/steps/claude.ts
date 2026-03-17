@@ -2,6 +2,7 @@ import { streamText } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import type { StepDefinition, StepContext } from "./types.js";
 import { getApiKey } from "../runtime/config.js";
+import { parseMaxTokens } from "./cheapest-model.js";
 
 export const claudeStep: StepDefinition = {
   name: "claude",
@@ -20,10 +21,10 @@ export const claudeStep: StepDefinition = {
     }
 
     const anthropic = createAnthropic({ apiKey });
-    const modelId =
-      ctx.config.model ||
-      ctx.globalConfig.default_model?.replace("anthropic/", "") ||
-      "claude-sonnet-4-6";
+    const defaultFromGlobal = ctx.globalConfig.default_model?.startsWith("anthropic/")
+      ? ctx.globalConfig.default_model.replace("anthropic/", "")
+      : undefined;
+    const modelId = ctx.config.model || defaultFromGlobal || "claude-sonnet-4-6";
     const model = anthropic(modelId);
     const startTime = Date.now();
 
@@ -31,7 +32,7 @@ export const claudeStep: StepDefinition = {
       model,
       prompt: ctx.input,
       ...(ctx.config.system ? { system: ctx.config.system } : {}),
-      maxOutputTokens: ctx.config["max-tokens"] ? parseInt(ctx.config["max-tokens"]) : 4096,
+      maxOutputTokens: parseMaxTokens(ctx.config["max-tokens"]),
     });
 
     for await (const chunk of result.textStream) {

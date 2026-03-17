@@ -40,16 +40,25 @@ export async function runStep(
   const generator = step.run({ input, config: configPairs, globalConfig });
 
   let meta;
-  while (true) {
-    const { value, done } = await generator.next();
-    if (done) {
-      meta = value;
-      break;
+  try {
+    let lastChunk = "";
+    while (true) {
+      const { value, done } = await generator.next();
+      if (done) {
+        meta = value;
+        break;
+      }
+      process.stdout.write(value);
+      lastChunk = value;
     }
-    process.stdout.write(value);
+    // Only add newline if output doesn't already end with one
+    if (lastChunk && !lastChunk.endsWith("\n")) {
+      process.stdout.write("\n");
+    }
+  } catch (err: any) {
+    process.stderr.write(`\nError in step "${stepName}": ${err.message}\n`);
+    process.exit(1);
   }
-
-  process.stdout.write("\n");
 
   if (meta) {
     emitMeta(meta);

@@ -1,6 +1,7 @@
 import { streamText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import type { StepDefinition, StepContext } from "./types.js";
+import { parseMaxTokens } from "./cheapest-model.js";
 
 export const localStep: StepDefinition = {
   name: "local",
@@ -24,7 +25,7 @@ export const localStep: StepDefinition = {
         model,
         prompt: ctx.input,
         ...(ctx.config.system ? { system: ctx.config.system } : {}),
-        maxOutputTokens: ctx.config["max-tokens"] ? parseInt(ctx.config["max-tokens"]) : 4096,
+        maxOutputTokens: parseMaxTokens(ctx.config["max-tokens"]),
       });
     } catch (err: any) {
       if (err?.cause?.code === "ECONNREFUSED") {

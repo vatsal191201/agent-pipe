@@ -20,6 +20,9 @@ export async function runPipelineCommand(name: string): Promise<void> {
   });
 
   if (input && child.stdin) {
+    child.stdin.on("error", (err: NodeJS.ErrnoException) => {
+      if (err.code !== "EPIPE") throw err;
+    });
     child.stdin.write(input);
     child.stdin.end();
   }

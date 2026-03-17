@@ -2,6 +2,7 @@ import { streamText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import type { StepDefinition, StepContext } from "./types.js";
 import { getApiKey } from "../runtime/config.js";
+import { parseMaxTokens } from "./cheapest-model.js";
 
 export const openaiStep: StepDefinition = {
   name: "openai",
@@ -26,7 +27,7 @@ export const openaiStep: StepDefinition = {
       model,
       prompt: ctx.input,
       ...(ctx.config.system ? { system: ctx.config.system } : {}),
-      maxOutputTokens: ctx.config["max-tokens"] ? parseInt(ctx.config["max-tokens"]) : 4096,
+      maxOutputTokens: parseMaxTokens(ctx.config["max-tokens"]),
     });
 
     for await (const chunk of result.textStream) {

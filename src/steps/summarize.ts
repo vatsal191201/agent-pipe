@@ -1,8 +1,6 @@
 import { streamText } from "ai";
-import { createAnthropic } from "@ai-sdk/anthropic";
-import { createOpenAI } from "@ai-sdk/openai";
 import type { StepDefinition, StepContext } from "./types.js";
-import { getApiKey } from "../runtime/config.js";
+import { resolveCheapestModel } from "./cheapest-model.js";
 
 const LENGTH_GUIDE: Record<string, string> = {
   short: "1-2 sentences",
@@ -29,22 +27,7 @@ export const summarizeStep: StepDefinition = {
 
     const systemPrompt = `Summarize the following text in ${LENGTH_GUIDE[length] || LENGTH_GUIDE.medium}. ${STYLE_GUIDE[style] || STYLE_GUIDE.prose} Output only the summary, nothing else.`;
 
-    let model: any;
-    let modelId: string;
-    const anthropicKey = getApiKey("anthropic", ctx.globalConfig);
-    const openaiKey = getApiKey("openai", ctx.globalConfig);
-
-    if (anthropicKey) {
-      const anthropic = createAnthropic({ apiKey: anthropicKey });
-      modelId = "claude-haiku-4-5";
-      model = anthropic(modelId);
-    } else if (openaiKey) {
-      const openai = createOpenAI({ apiKey: openaiKey });
-      modelId = "gpt-4.1-mini";
-      model = openai(modelId);
-    } else {
-      throw new Error("No API key found. Set ANTHROPIC_API_KEY or OPENAI_API_KEY.");
-    }
+    const { model, modelId } = resolveCheapestModel(ctx.globalConfig);
 
     const startTime = Date.now();
     const result = await streamText({ model, system: systemPrompt, prompt: ctx.input });

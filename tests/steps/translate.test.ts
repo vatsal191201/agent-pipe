@@ -109,12 +109,24 @@ describe("translate step", () => {
     );
   });
 
-  it("throws error when no API key is available", async () => {
-    // Temporarily clear env vars so getApiKey finds nothing
+  it("falls back to local model when no API keys are set", async () => {
+    // resolveCheapestModel falls back to Ollama when no keys are available.
+    // Since createOpenAI is mocked, it will succeed and use the mock model.
+    const mockStream = (async function* () {
+      yield "Hola";
+    })();
+
+    vi.mocked(streamText).mockResolvedValue({
+      textStream: mockStream,
+      usage: Promise.resolve({ inputTokens: 5, outputTokens: 5 }),
+    } as any);
+
     const savedAnthropic = process.env.ANTHROPIC_API_KEY;
     const savedOpenai = process.env.OPENAI_API_KEY;
+    const savedGoogle = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
     delete process.env.ANTHROPIC_API_KEY;
     delete process.env.OPENAI_API_KEY;
+    delete process.env.GOOGLE_GENERATIVE_AI_API_KEY;
 
     const ctx: StepContext = {
       input: "Hello",
@@ -127,10 +139,13 @@ describe("translate step", () => {
     };
 
     const gen = translateStep.run(ctx);
-    await expect(gen.next()).rejects.toThrow("No API key found");
+    const { value, done } = await gen.next();
+    expect(done).toBe(false);
+    expect(value).toBe("Hola");
 
     // Restore env vars
     if (savedAnthropic) process.env.ANTHROPIC_API_KEY = savedAnthropic;
     if (savedOpenai) process.env.OPENAI_API_KEY = savedOpenai;
+    if (savedGoogle) process.env.GOOGLE_GENERATIVE_AI_API_KEY = savedGoogle;
   });
 });

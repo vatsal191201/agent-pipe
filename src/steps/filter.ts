@@ -1,8 +1,6 @@
 import { streamText } from "ai";
-import { createAnthropic } from "@ai-sdk/anthropic";
-import { createOpenAI } from "@ai-sdk/openai";
 import type { StepDefinition, StepContext } from "./types.js";
-import { getApiKey } from "../runtime/config.js";
+import { resolveCheapestModel } from "./cheapest-model.js";
 
 export const filterStep: StepDefinition = {
   name: "filter",
@@ -22,22 +20,7 @@ export const filterStep: StepDefinition = {
       ? `Filter the following lines. Keep only lines that do NOT match: ${query}. Output non-matching lines only, one per line. Do not add explanations.`
       : `Filter the following lines. Keep only lines that match: ${query}. Output matching lines only, one per line. Do not add explanations.`;
 
-    let model: any;
-    let modelId: string;
-    const anthropicKey = getApiKey("anthropic", ctx.globalConfig);
-    const openaiKey = getApiKey("openai", ctx.globalConfig);
-
-    if (anthropicKey) {
-      const anthropic = createAnthropic({ apiKey: anthropicKey });
-      modelId = "claude-haiku-4-5";
-      model = anthropic(modelId);
-    } else if (openaiKey) {
-      const openai = createOpenAI({ apiKey: openaiKey });
-      modelId = "gpt-4.1-mini";
-      model = openai(modelId);
-    } else {
-      throw new Error("No API key found. Set ANTHROPIC_API_KEY or OPENAI_API_KEY.");
-    }
+    const { model, modelId } = resolveCheapestModel(ctx.globalConfig);
 
     const startTime = Date.now();
     const result = await streamText({ model, system: systemPrompt, prompt: ctx.input });

@@ -26,7 +26,11 @@ export function loadPipeline(name: string, baseDir?: string): Pipeline | undefin
   const dir = pipelinesDir(baseDir);
   const path = join(dir, `${name}.json`);
   if (!existsSync(path)) return undefined;
-  return JSON.parse(readFileSync(path, "utf-8"));
+  try {
+    return JSON.parse(readFileSync(path, "utf-8"));
+  } catch {
+    return undefined;
+  }
 }
 
 export function listPipelines(baseDir?: string): string[] {

@@ -30,8 +30,16 @@ export function loadConfig(path: string = defaultConfigPath()): PipeConfig {
   }
   try {
     const raw = readFileSync(path, "utf-8");
-    return { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
-  } catch {
+    try {
+      return { ...DEFAULT_CONFIG, ...JSON.parse(raw) };
+    } catch {
+      process.stderr.write(`Warning: config file is not valid JSON (${path}), using defaults.\n`);
+      return { ...DEFAULT_CONFIG };
+    }
+  } catch (err: any) {
+    if (err.code !== "ENOENT") {
+      process.stderr.write(`Warning: could not read config (${path}): ${err.message}\n`);
+    }
     return { ...DEFAULT_CONFIG };
   }
 }

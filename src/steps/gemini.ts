@@ -2,6 +2,7 @@ import { streamText } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import type { StepDefinition, StepContext } from "./types.js";
 import { getApiKey } from "../runtime/config.js";
+import { parseMaxTokens } from "./cheapest-model.js";
 
 export const geminiStep: StepDefinition = {
   name: "gemini",
@@ -28,7 +29,7 @@ export const geminiStep: StepDefinition = {
       model,
       prompt: ctx.input,
       ...(ctx.config.system ? { system: ctx.config.system } : {}),
-      maxOutputTokens: ctx.config["max-tokens"] ? parseInt(ctx.config["max-tokens"]) : 4096,
+      maxOutputTokens: parseMaxTokens(ctx.config["max-tokens"]),
     });
 
     for await (const chunk of result.textStream) {
