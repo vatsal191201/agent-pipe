@@ -8,7 +8,12 @@ describe("step registry", () => {
     expect(steps).toContain("openai");
     expect(steps).toContain("summarize");
     expect(steps).toContain("format");
-    expect(steps.length).toBeGreaterThanOrEqual(4);
+    expect(steps).toContain("local");
+    expect(steps).toContain("gemini");
+    expect(steps).toContain("translate");
+    expect(steps).toContain("extract");
+    expect(steps).toContain("filter");
+    expect(steps.length).toBeGreaterThanOrEqual(9);
   });
 
   it("returns a step by name", () => {

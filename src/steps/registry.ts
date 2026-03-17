@@ -22,8 +22,18 @@ import { claudeStep } from "./claude.js";
 import { openaiStep } from "./openai.js";
 import { summarizeStep } from "./summarize.js";
 import { formatStep } from "./format.js";
+import { localStep } from "./local.js";
+import { geminiStep } from "./gemini.js";
+import { translateStep } from "./translate.js";
+import { extractStep } from "./extract.js";
+import { filterStep } from "./filter.js";
 
 registerStep(claudeStep);
 registerStep(openaiStep);
 registerStep(summarizeStep);
 registerStep(formatStep);
+registerStep(localStep);
+registerStep(geminiStep);
+registerStep(translateStep);
+registerStep(extractStep);
+registerStep(filterStep);
